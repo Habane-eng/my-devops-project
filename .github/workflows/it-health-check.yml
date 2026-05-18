@@ -1,0 +1,52 @@
+name: IT Health Check Automation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show system information
+        run: |
+          echo "===== SYSTEM INFO ====="
+          hostname
+          uname -a
+          whoami
+
+      - name: Check disk space
+        run: |
+          echo "===== DISK SPACE ====="
+          df -h
+
+      - name: Check memory
+        run: |
+          echo "===== MEMORY ====="
+          free -h
+
+      - name: Check CPU
+        run: |
+          echo "===== CPU ====="
+          lscpu
+
+      - name: Create health report
+        run: |
+          echo "IT Health Check Report" > health-report.txt
+          echo "======================" >> health-report.txt
+          echo "Date: $(date)" >> health-report.txt
+          echo "" >> health-report.txt
+          echo "Disk Space:" >> health-report.txt
+          df -h >> health-report.txt
+          echo "" >> health-report.txt
+          echo "Memory:" >> health-report.txt
+          free -h >> health-report.txt
+          echo "" >> health-report.txt
+          echo "CPU:" >> health-report.txt
+          lscpu >> health-report.txt
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: it-health-report
+          path: health-report.txt
